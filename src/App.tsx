@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {
+  BrowserRouter,
+  Route,
+  Routes,
+  unstable_HistoryRouter as HistoryRouter,
+} from 'react-router-dom';
+import EditeIcecream from './ice-cream/EditIcecream';
+import Menu from './ice-cream/Menu';
+import Footer from './structure/Footer';
+import Header from './structure/Header';
+import './styles/ice-cream.scss';
+import { createBrowserHistory } from 'history';
 
-function App() {
+const history = createBrowserHistory({ window });
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HistoryRouter history={history}>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Menu />} />
+        <Route path="/menu-items/:menuItemId" element={<EditeIcecream history={history} />} />
+        {/* <Route path="*" element={<Menu />} /> */}
+      </Routes>
+      <Footer />
+    </HistoryRouter>
   );
-}
+};
 
 export default App;
