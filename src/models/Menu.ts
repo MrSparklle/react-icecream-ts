@@ -1,7 +1,7 @@
 import { IIceCream } from './Icecream';
 
 export interface IMenu {
-  id: number;
+  id?: number;
   iceCream: IIceCream;
   inStock: boolean;
   quantity: number;

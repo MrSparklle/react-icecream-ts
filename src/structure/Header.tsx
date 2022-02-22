@@ -11,6 +11,9 @@ const Header = () => {
         <NavLink to="/" state={{ focus: true }}>
           Menu
         </NavLink>
+        <NavLink to="/ice-creams" state={{ focus: true }}>
+          Add Ice Cream
+        </NavLink>
       </nav>
     </header>
   );

@@ -127,6 +127,8 @@ app.get('/api/menu', (req, res) => {
 
 app.post('/api/menu', (req, res) => {
   const { iceCream, ...rest } = req.body;
+console.log(iceCream);
+
   const newMenuItem = {
     id: menuData.reduce((prev, cur) => (cur.id > prev ? cur.id : prev), 0) + 1,
     iceCream: {
@@ -134,6 +136,7 @@ app.post('/api/menu', (req, res) => {
     },
     ...rest,
   };
+  console.log(newMenuItem)
   menuData.push(newMenuItem);
 
   res.send(newMenuItem);

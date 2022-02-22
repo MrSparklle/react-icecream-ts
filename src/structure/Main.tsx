@@ -23,7 +23,7 @@ const Main = ({ children, headingText }: Props) => {
   }, [location.state]);
 
   return (
-    <main>
+    <main tabIndex={-1} id="main">
       <Helmet>
         <title>{headingText} | React Icecream</title>
       </Helmet>

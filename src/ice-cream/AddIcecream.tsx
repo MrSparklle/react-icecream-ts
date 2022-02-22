@@ -1,20 +1,21 @@
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { deleteMenuItem, getMenuItem, putMenuItem } from '../api/iceCreamData';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { getIceCream, postMenuItem } from '../api/iceCreamData';
+import { IIceCream } from '../models/Icecream';
 import { IMenu } from '../models/Menu';
 import { BrowserHistory } from 'history';
-import LoaderMessage from '../structure/LoaderMessage';
 import Main from '../structure/Main';
+import LoaderMessage from '../structure/LoaderMessage';
 import Icecream from './Icecream';
 
 type Props = {
   history: BrowserHistory;
 };
 
-const EditeIcecream = ({ history }: Props) => {
+const AddIcecream = ({ history }: Props) => {
   // router
-  const { menuItemId } = useParams();
-  // const navigate = useNavigate();
+  const { iceCreamId } = useParams();
+  const [searchParams] = useSearchParams();
 
   // state
   const [menuItem, setMenuItem] = useState({} as IMenu);
@@ -30,13 +31,13 @@ const EditeIcecream = ({ history }: Props) => {
 
   useEffect(() => {
     setIsLoading(true);
-    async function fetchMenu() {
+    async function fetchMenuItem() {
       try {
-        const menu: IMenu = await getMenuItem(parseInt(menuItemId || '0'));
+        const iceCream: IIceCream = await getIceCream(parseInt(iceCreamId || '0'));
 
         // protection from memory leaks
         if (isMounted.current) {
-          setMenuItem(menu);
+          setMenuItem((currentItem) => ({ ...currentItem, iceCream }));
         }
         setIsLoading(false);
       } catch (error: any) {
@@ -47,34 +48,20 @@ const EditeIcecream = ({ history }: Props) => {
         }
       }
     }
-    fetchMenu();
-  }, [menuItemId, history]);
-
-  // delete a item from the menu
-  const onDeleteHandler = async (id: number) => {
-    const x = await deleteMenuItem(id);
-    console.log(x);
-    // replace to avoid user to back to a deleted item
-    history.replace('/', { focus: true });
-  };
+    fetchMenuItem();
+  }, [iceCreamId, history]);
 
   const onSubmitHandler = async (menuItem: IMenu) => {
-    await putMenuItem(menuItem);
+    await postMenuItem(menuItem);
     history.push('/', { focus: true });
   };
 
   return (
-    <Main headingText="Update this beauty">
+    <Main headingText="Add some goodness to the menu">
       <LoaderMessage loadingMessage="Loading ice cream" doneMessage="Loading complete" isLoading={isLoading} />
-      {!isLoading && (
-        <Icecream
-          menuItem={menuItem}
-          onDelete={(id: number) => onDeleteHandler(id)}
-          onSubmit={(menuItem: IMenu) => onSubmitHandler(menuItem)}
-        />
-      )}
+      {!isLoading && <Icecream menuItem={menuItem} onSubmit={onSubmitHandler} />}
     </Main>
   );
 };
 
-export default EditeIcecream;
+export default AddIcecream;

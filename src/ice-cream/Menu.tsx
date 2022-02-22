@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
 import { getMenu } from '../api/iceCreamData';
 import { IMenu } from '../models/Menu';
-import IcecreamImage from './IcecreamImage';
 import LoaderMessage from '../structure/LoaderMessage';
-import { Link, useNavigate } from 'react-router-dom';
-import '../styles/forms-spacer.scss';
 import Main from '../structure/Main';
+import IcecreamCard from './IcecreamCard';
+import IcecreamCardContainer from './IcecreamCardContainer';
 
 const Menu = () => {
   const [menu, setMenu] = useState(Array<IMenu>());
   const [isLoading, setIsLoading] = useState(true);
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     let isMounted = true;
 
     const fetchData = async () => {
       const menuData = await getMenu();
+      // console.log(menuData);
 
       if (isMounted) {
         setMenu(menuData);
@@ -25,6 +23,7 @@ const Menu = () => {
       }
     };
 
+    // call the async function
     fetchData();
 
     // when unmounted
@@ -33,52 +32,23 @@ const Menu = () => {
     };
   }, []);
 
-  const onItemClickHandler = (to: string) => {
-    // navigate with react router
-    navigate(to, { state: { focus: true } });
-  };
-
   return (
     <Main headingText="Rock your taste buds with one of these!">
-      <LoaderMessage
-        loadingMessage="Loading Menu"
-        isLoading={isLoading}
-        doneMessage="Loading menu complete"
-      />
+      <LoaderMessage loadingMessage="Loading Menu" isLoading={isLoading} doneMessage="Loading menu complete" />
       {menu.length > 0 ? (
-        <ul className="container">
+        <IcecreamCardContainer>
           {menu.map((menuItem: IMenu) => (
-            <li key={menuItem.id}>
-              <section
-                className="card"
-                onClick={() => onItemClickHandler(`/menu-items/${menuItem.id}`)}
-              >
-                <div className="image-container">
-                  <IcecreamImage icecreamId={menuItem.iceCream.id} />
-                </div>
-                <div className="text-container">
-                  <h3>
-                    <Link
-                      to={`/menu-items/${menuItem.id}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {menuItem.iceCream.name}
-                    </Link>
-                  </h3>
-                  <div className="content card-content">
-                    <p className="price">{`$ ${menuItem.price.toFixed(2)}`}</p>
-                    <p className={`stock${menuItem.inStock ? '' : ' out'}`}>
-                      {menuItem.inStock
-                        ? `${menuItem.quantity} in stock`
-                        : 'out of stock'}
-                    </p>
-                    <p className="description">{menuItem.description}</p>
-                  </div>
-                </div>
-              </section>
-            </li>
+            <IcecreamCard key={menuItem.id} icecream={menuItem.iceCream} to={`/menu-items/${menuItem.id}`}>
+              <div className="content card-content">
+                <p className="price">{`$ ${menuItem.price.toFixed(2)}`}</p>
+                <p className={`stock${menuItem.inStock ? '' : ' out'}`}>
+                  {menuItem.inStock ? `${menuItem.quantity} in stock` : 'out of stock'}
+                </p>
+                <p className="description">{menuItem.description}</p>
+              </div>
+            </IcecreamCard>
           ))}
-        </ul>
+        </IcecreamCardContainer>
       ) : (
         !isLoading && <p>Your menu is empty!</p>
       )}
